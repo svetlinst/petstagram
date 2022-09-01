@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.core.validators import MinLengthValidator
 
@@ -34,7 +36,7 @@ class Profile(models.Model):
 
     profile_picture = models.URLField()
 
-    date_of_birth = models.DateTimeField(
+    date_of_birth = models.DateField(
         null=True,
         blank=True,
     )
@@ -81,18 +83,22 @@ class Pet(models.Model):
         choices=TYPES,
     )
 
-    date_of_birth = models.DateTimeField(
+    date_of_birth = models.DateField(
         null=True,
         blank=True,
     )
 
-    user = models.ForeignKey(
+    user_profile = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
     )
 
+    @property
+    def age(self):
+        return datetime.datetime.now().year - self.date_of_birth.year
+
     class Meta:
-        unique_together = ('user', 'name')
+        unique_together = ('user_profile', 'name')
 
 
 class PetPhoto(models.Model):
